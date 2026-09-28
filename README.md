@@ -54,6 +54,8 @@ Claude writes the storyboard, validates it, runs it on the real page, renders, c
 
 ## What you get from one storyboard
 
+▶ **[Watch a real delivery, as it came out](https://junixlabs.github.io/how-it-works/#real)**: the built-in explainer demo (58 s), made by one `hiw demo` run that passed 14/14 gates.
+
 <table>
   <tr>
     <td width="50%"><img src="docs/media/sample-guide-step.gif" alt="Guide step GIF with a numbered callout on the real input box" /></td>
