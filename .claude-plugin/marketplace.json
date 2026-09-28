@@ -1,0 +1,14 @@
+{
+  "name": "how-it-works",
+  "owner": { "name": "junixlabs", "url": "https://github.com/junixlabs" },
+  "metadata": { "description": "How It Works: verified product tutorials and videos for Claude Code." },
+  "plugins": [
+    {
+      "name": "how-it-works",
+      "source": "./",
+      "description": "Turn one storyboard into verified step-by-step guides, GIFs, and narrated videos of your real product.",
+      "version": "1.0.0",
+      "category": "productivity"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "name": "how-it-works",
+  "version": "1.0.0",
+  "description": "Tutorials that can't go stale. Turn one storyboard into verified step-by-step guides, GIFs, and narrated 16:9 and 9:16 videos of your real product.",
+  "author": { "name": "How It Works contributors", "url": "https://github.com/junixlabs/how-it-works" },
+  "homepage": "https://github.com/junixlabs/how-it-works",
+  "repository": "https://github.com/junixlabs/how-it-works",
+  "license": "MIT",
+  "keywords": ["tutorial", "documentation", "video", "onboarding", "release-notes", "playwright", "tts", "skill"]
+}

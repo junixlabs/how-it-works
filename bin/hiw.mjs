@@ -53,17 +53,17 @@ if (cmd === 'doctor') {
   c('node >= 20', +process.versions.node.split('.')[0] >= 20, process.versions.node, 'everything');
   c('ffmpeg + ffprobe', has('ffmpeg') && has('ffprobe'), has('ffmpeg') ? 'found' : 'missing: brew install ffmpeg', 'clips, audio, QA');
   const deps = fs.existsSync(path.join(ROOT, 'node_modules/playwright')) && fs.existsSync(path.join(ROOT, 'node_modules/ajv'));
-  c('npm dependencies', deps, deps ? 'installed' : `run: cd ${ROOT} && npm install`, 'everything');
+  c('npm dependencies', deps, deps ? 'installed' : `run: node ${ROOT}/scripts/setup.mjs`, 'everything');
   let chrome = false;
   try { const { chromium } = await import('playwright'); const b = await chromium.launch(); await b.close(); chrome = true; } catch { /* reported below */ }
-  c('playwright chromium', chrome, chrome ? 'launches' : 'run: npx playwright install chromium', 'capture, guide stills, diagrams');
+  c('playwright chromium', chrome, chrome ? 'launches' : `run: node ${ROOT}/scripts/setup.mjs`, 'capture, guide stills, diagrams');
   c('npx (HyperFrames)', has('npx', ['--version']), `${HYPERFRAMES} via npx`, 'video render');
   const acli = archifyCli();
   let aver = null;
   try { aver = JSON.parse(fs.readFileSync(path.join(archifyHome(), 'skill-release.json'), 'utf8')).version; } catch { /* none */ }
   c('archify', !!acli, acli ? `${archifyHome()} v${aver}` : 'install the archify skill or set ARCHIFY_HOME', 'diagram scenes only');
   const kok = fs.existsSync(KOKORO_PY) && spawnSync(KOKORO_PY, ['-c', 'import kokoro, soundfile'], { encoding: 'utf8' }).status === 0;
-  c('kokoro TTS', kok, kok ? KOKORO_PY : `run: python3.11 -m venv ${ROOT}/.venv-tts && ${ROOT}/.venv-tts/bin/pip install kokoro soundfile`, 'tts.engine "kokoro"');
+  c('kokoro TTS', kok, kok ? KOKORO_PY : `run: node ${ROOT}/scripts/setup.mjs`, 'tts.engine "kokoro"');
   c('macOS say', has('say', ['-v', '?']), 'placeholder voice', 'tts.engine "say"');
   c('built-in SFX', fs.existsSync(path.join(ROOT, 'assets/sfx/key.wav')), 'assets/sfx/*.wav (node scripts/make-sfx.mjs)', 'audio.sfx');
   const mus = fs.existsSync(path.join(ROOT, 'assets/music/default.mp3'));
