@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>How It Works</title>
+<meta name="description" content="Tutorials that can't go stale. A Claude Code plugin that turns one storyboard into verified guides, GIFs, and narrated videos of your real product." />
+<meta property="og:title" content="How It Works: tutorials that can't go stale" />
+<meta property="og:description" content="One storyboard in. Verified guides, GIFs, and narrated 16:9 and 9:16 videos of your real product out." />
+<meta property="og:image" content="https://junixlabs.github.io/how-it-works/media/social-preview.png" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  :root {
+    --bg: #f7f6f4; --surface: #ffffff; --ink: #14161b; --muted: #5c6270; --line: #e4e2de;
+    --coral: #e2463a; --amber: #c9731f; --pass: #0f8a5f; --code-bg: #14161b; --code-ink: #e7e9ee;
+    --display: "SF Pro Display", "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, "Segoe UI", "Helvetica Neue", system-ui, sans-serif;
+    --mono: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #07080b; --surface: #0f1117; --ink: #f4f5f7; --muted: #9aa0ab; --line: #1e212a;
+      --coral: #ff6a5e; --amber: #ffb86b; --pass: #34d399; --code-bg: #0f1117; --code-ink: #e7e9ee;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #07080b; --surface: #0f1117; --ink: #f4f5f7; --muted: #9aa0ab; --line: #1e212a;
+    --coral: #ff6a5e; --amber: #ffb86b; --pass: #34d399; --code-bg: #0f1117; --code-ink: #e7e9ee;
+    color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--ink); font: 17px/1.6 var(--body); padding: 0 20px; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding-block: 56px 72px; display: grid; gap: 72px; }
+  a { color: var(--coral); }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--coral); outline-offset: 3px; border-radius: 4px; }
+  .kicker { font: 700 13px/1 var(--body); letter-spacing: .24em; text-transform: uppercase; color: var(--coral); }
+  h1 { font: 900 clamp(52px, 9vw, 104px)/.95 var(--display); letter-spacing: -.045em; margin: 14px 0 18px; text-wrap: balance; }
+  h1 .grad { background: linear-gradient(90deg, var(--coral), var(--amber)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .lede { font-size: clamp(19px, 2.4vw, 24px); line-height: 1.45; color: var(--muted); max-width: 40ch; margin: 0; text-wrap: balance; }
+  .lede strong { color: var(--ink); }
+  header { display: grid; gap: 28px; }
+  .player { position: relative; border-radius: 16px; overflow: hidden; background: #000; box-shadow: 0 40px 100px rgba(0,0,0,.28), 0 0 0 1px var(--line); aspect-ratio: 16 / 9; max-width: 100%; }
+  .player video { display: block; width: 100%; height: 100%; }
+  .under { display: flex; flex-wrap: wrap; gap: 8px 22px; align-items: baseline; color: var(--muted); font-size: 15px; }
+  .under b { color: var(--ink); font-weight: 650; }
+  h2 { font: 850 clamp(30px, 4vw, 42px)/1.1 var(--display); letter-spacing: -.03em; margin: 0 0 18px; text-wrap: balance; }
+  section > p { margin: 0 0 22px; max-width: 62ch; color: var(--muted); }
+  .install { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 20px; align-items: start; }
+  .install > *, .outs > * { min-width: 0; }
+  .code { background: var(--code-bg); color: var(--code-ink); border-radius: 12px; border: 1px solid var(--line); overflow: hidden; }
+  .code .bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,.08); font: 600 12px/1 var(--body); letter-spacing: .12em; text-transform: uppercase; color: #9aa0ab; }
+  .code pre { margin: 0; padding: 16px 18px; font: 14.5px/1.75 var(--mono); overflow-x: auto; }
+  .code .p { color: #ffb86b; }
+  .copy { font: 600 12px/1 var(--body); color: #e7e9ee; background: rgba(255,255,255,.08); border: 0; border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+  .copy:hover { background: rgba(255,255,255,.16); }
+  .note { font-size: 15px; color: var(--muted); margin: 0; }
+  .outs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 20px; }
+  figure { margin: 0; display: grid; gap: 10px; align-content: start; }
+  figure img { width: 100%; border-radius: 10px; border: 1px solid var(--line); display: block; background: var(--surface); }
+  figure .tall { aspect-ratio: 9 / 16; object-fit: cover; max-height: 280px; width: auto; max-width: 100%; }
+  figcaption { font-size: 15px; color: var(--muted); }
+  figcaption b { display: block; color: var(--ink); font-size: 16px; }
+  .gates { background: var(--code-bg); color: var(--code-ink); border-radius: 12px; border: 1px solid var(--line); padding: 18px 20px; font: 14px/1.9 var(--mono); overflow-x: auto; white-space: pre; font-variant-numeric: tabular-nums; }
+  .gates .ok { color: #34d399; font-weight: 700; }
+  .gates .dim { color: #9aa0ab; }
+  footer { display: flex; flex-wrap: wrap; gap: 10px 24px; justify-content: space-between; color: var(--muted); font-size: 15px; border-top: 1px solid var(--line); padding-top: 24px; }
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="kicker">A Claude Code plugin</div>
+      <h1>How It <span class="grad">Works</span></h1>
+      <p class="lede"><strong>Tutorials that can't go stale.</strong> Write one storyboard. It clicks through your real product and delivers a guide, GIFs, and narrated videos, checked before they ship.</p>
+    </div>
+    <div class="player">
+      <video id="launch" src="media/launch.mp4" poster="media/launch-poster.jpg" controls playsinline preload="metadata"></video>
+    </div>
+    <div class="under"><span><b>34 seconds, sound on.</b></span><span>Built from footage, narration, and diagrams that How It Works produced. No timeline editor.</span></div>
+  </header>
+
+  <section id="install">
+    <h2>Install in Claude Code</h2>
+    <p>Add the marketplace, install the plugin, then run setup once. Setup adds Chromium and the Kokoro voice, which is about 1 GB and cached in <code>~/.cache/how-it-works</code>.</p>
+    <div class="install">
+      <div class="code">
+        <div class="bar"><span>Claude Code</span><button class="copy" type="button" data-copy="c1">Copy</button></div>
+        <pre id="c1"><span class="p">/plugin</span> marketplace add junixlabs/how-it-works
+<span class="p">/plugin</span> install how-it-works@how-it-works
+<span class="p">/how-it-works:setup</span></pre>
+      </div>
+      <div class="code">
+        <div class="bar"><span>Then ask</span><button class="copy" type="button" data-copy="c2">Copy</button></div>
+        <pre id="c2">Use How It Works to make a tutorial for
+https://demo.playwright.dev/todomvc: add two
+tasks, complete one, then filter to the
+completed list. Guide with GIFs, plus a
+narrated video, wide and vertical.</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="outputs">
+    <h2>One storyboard, four outputs</h2>
+    <div class="outs">
+      <figure><img src="media/sample-guide-step.gif" alt="Guide step GIF with a numbered callout on the real input box" loading="lazy" /><figcaption><b>Guide + GIFs</b>Every bold UI label is checked against the page.</figcaption></figure>
+      <figure><img src="media/sample-video.jpg" alt="Frame from a narrated 16:9 video with word-timed captions" loading="lazy" /><figcaption><b>Narrated 16:9</b>Captions timed to each word, and the camera follows each click.</figcaption></figure>
+      <figure><img class="tall" src="media/sample-vertical.jpg" alt="Frame from the 9:16 vertical cut" loading="lazy" /><figcaption><b>Vertical 9:16</b>The same run, recut for Shorts and Reels.</figcaption></figure>
+      <figure><img src="media/sample-diagram.png" alt="Architecture explainer frame with two nodes in focus" loading="lazy" /><figcaption><b>Architecture explainers</b>Animated tours of Archify diagrams.</figcaption></figure>
+    </div>
+  </section>
+
+  <section id="proof">
+    <h2>Checked before it ships</h2>
+    <p>A real browser runs every step. The outputs replace the last delivery only when every gate passes, and the run writes a receipt with SHA-256 hashes. These are the gates from the release example:</p>
+    <div class="gates"><span class="ok">PASS</span>  guide: UI labels exist in product      <span class="dim">3/3 labels</span>
+<span class="ok">PASS</span>  guide: gif covers action add-tasks     <span class="dim">14.20s vs 11.88s</span>
+<span class="ok">PASS</span>  video-16x9: no black gaps              <span class="dim">none</span>
+<span class="ok">PASS</span>  video-16x9: loudness -14 LUFS ±2       <span class="dim">-15.8 LUFS</span>
+<span class="ok">PASS</span>  video-16x9: caption speed add-tasks    <span class="dim">15.2 chars/s</span>
+<span class="ok">PASS</span>  video-9x16: spec 1080x1920             <span class="dim">1080x1920 h264 30/1</span>
+<span class="dim">...   29/29 passed · receipt.json sha256 dea843c2…</span></div>
+  </section>
+
+  <footer>
+    <span><a href="https://github.com/junixlabs/how-it-works">github.com/junixlabs/how-it-works</a> · MIT</span>
+    <span>Built on Archify, HyperFrames, Kokoro, and Playwright</span>
+  </footer>
+</div>
+<script>
+  document.querySelectorAll('.copy').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var el = document.getElementById(b.dataset.copy), text = el.innerText;
+      var done = function () { b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy'; }, 1600); };
+      try {
+        navigator.clipboard.writeText(text).then(done, function () { selectText(el); });
+      } catch (e) { selectText(el); }
+    });
+  });
+  function selectText(el) { var r = document.createRange(); r.selectNodeContents(el); var s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+</script>
+</body>
+</html>

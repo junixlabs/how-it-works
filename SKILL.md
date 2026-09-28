@@ -91,11 +91,14 @@ Add one line for any known limitation: the placeholder voice, estimated caption 
 
 ## Setup
 
+Before the first delivery, run `hiw doctor`. If it reports a missing dependency, run the setup script once. It is safe to rerun, and it is the same script the plugin's `/how-it-works:setup` command runs:
+
 ```bash
-cd <skill> && npm install && npx playwright install chromium
-python3.11 -m venv .venv-tts && .venv-tts/bin/pip install kokoro soundfile   # English voice
-hiw doctor
-hiw demo <out-dir>        # architecture explainer of this pipeline; needs Archify, no network
+node <skill>/scripts/setup.mjs            # npm deps, Chromium, Kokoro voice (~1 GB, cached in ~/.cache/how-it-works)
+node <skill>/scripts/setup.mjs --no-tts   # skip the voice; use tts.engine "say" or "none"
+hiw demo <out-dir>                        # architecture explainer of this pipeline; needs Archify
 ```
+
+If setup stops on a missing system tool (ffmpeg, or Python 3.10 to 3.12), tell the user the install command it printed.
 
 Diagram scenes need the [archify](https://github.com/tt-a1i/archify) skill at `~/.claude/skills/archify`, or set `ARCHIFY_HOME`.
