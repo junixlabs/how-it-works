@@ -1,0 +1,19 @@
+name: test
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - name: Fetch Archify (diagram reference checks)
+        run: git clone --depth 1 https://github.com/tt-a1i/archify "$RUNNER_TEMP/archify"
+      - run: npm test
+        env:
+          ARCHIFY_HOME: ${{ runner.temp }}/archify/archify

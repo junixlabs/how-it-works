@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1920, height=1080" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<style>
+  
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: #07080b; }
+  #root { width: 100%; height: 100%; position: relative; overflow: hidden; font-family: "SF Pro Display", "Helvetica Neue", system-ui, sans-serif; color: #f4f5f7; }
+  .clip { position: absolute; inset: 0; }
+  #bg { background: #07080b; overflow: hidden; }
+  .blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: .55; }
+  .b1 { width: 900px; height: 900px; left: -200px; top: -300px; background: radial-gradient(circle, #3b2bd6 0%, transparent 65%); }
+  .b2 { width: 1000px; height: 1000px; right: -300px; top: 100px; background: radial-gradient(circle, #ff4e3a 0%, transparent 62%); opacity: .38; }
+  .b3 { width: 800px; height: 800px; left: 520px; bottom: -520px; background: radial-gradient(circle, #10b3a3 0%, transparent 62%); opacity: .42; }
+  .grid { position: absolute; left: 0; right: 0; top: -300px; bottom: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 60px 60px; }
+  .vig { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,.65) 100%); }
+  #intro, .tcard { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 10px; padding: 0 60px; }
+  .kicker { display: inline-flex; align-items: center; gap: 12px; font-size: 22px; font-weight: 700; letter-spacing: .22em; color: #ffb4ad; margin-bottom: 18px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: #ff5a4e; box-shadow: 0 0 18px #ff5a4e; }
+  .ttl { font-size: 112px; font-weight: 800; letter-spacing: -0.035em; line-height: 1.1; }
+  .ttl .w { display: inline-block; }
+  .ttl2 { font-size: 64px; font-weight: 600; color: #c9ccd3; letter-spacing: -0.02em; }
+  .ttl2 .w2 { display: inline-block; }
+  .accent { background: linear-gradient(90deg, #ff7a6e, #ffb86b); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .sweep { position: absolute; width: 260px; height: 520px; top: 280px; left: 830px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent); transform: skewX(-18deg); mix-blend-mode: overlay; }
+  .sub { margin-top: 26px; font-size: 28px; color: #9aa0ab; max-width: 1760px; }
+  .persp { position: absolute; left: 224px; top: 52px; width: 1472px; height: 867.9999999999999px; perspective: 2600px; }
+  .enter, .drift { position: absolute; inset: 0; transform-style: preserve-3d; }
+  .frame, .dpanel { position: absolute; inset: 0; border-radius: 16px; overflow: hidden; background: #f5f5f5;
+           box-shadow: 0 60px 140px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.08), 0 0 80px rgba(124,156,255,.12); }
+  .bar { height: 40px; background: #16181d; display: flex; align-items: center; gap: 8px; padding: 0 16px; }
+  .bar > span { width: 12px; height: 12px; border-radius: 50%; background: #ff5f57; } .bar > span:nth-child(2) { background: #febc2e; } .bar > span:nth-child(3) { background: #28c840; }
+  .addr { margin-left: 16px; display: flex; align-items: center; height: 26px; padding: 0 14px; border-radius: 8px; background: #23262d; color: #a8adb6; font-size: 14px; }
+  .view { position: relative; width: 1472px; height: 827.9999999999999px; overflow: hidden; }
+  .dview { position: relative; width: 1472px; height: 867.9999999999999px; overflow: hidden; }
+  .cam { position: absolute; left: 0; top: 0; width: 1472px; height: 867.9999999999999px; }
+  .shot { position: absolute; inset: 0; width: 1472px; height: 827.9999999999999px; object-fit: cover; }
+  .spot { position: absolute; border-radius: 12px; box-shadow: 0 0 0 4px #ff5a4e, 0 0 0 5000px rgba(8,10,16,.42), 0 0 40px 6px rgba(255,90,78,.55); opacity: 0; }
+  .tip { position: absolute; display: flex; align-items: center; gap: 8px; white-space: nowrap; padding: 7px 14px 7px 8px; border-radius: 999px; background: #111318; color: #fff;
+         font-size: 17px; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,.35); opacity: 0; transform-origin: 50% 100%; }
+  .tip.up { translate: -50% -100%; } .tip.down { translate: -50% 0; transform-origin: 50% 0; }
+  .tip b { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: #ff5a4e; font-size: 13px; }
+  .burst { position: absolute; width: 0; height: 0; }
+  .burst i { position: absolute; width: 9px; height: 9px; margin: -4.5px; border-radius: 50%; opacity: 0; }
+  .burst u { position: absolute; width: 40px; height: 40px; margin: -20px; border-radius: 50%; border: 3px solid #34d399; opacity: 0; }
+  .key { position: absolute; right: 36px; bottom: 36px; display: flex; align-items: center; gap: 10px; padding: 14px 22px; border-radius: 14px;
+         background: linear-gradient(#2a2d35, #1a1c21); color: #fff; font-size: 26px; font-weight: 700; box-shadow: 0 6px 0 #0b0c0f, 0 18px 40px rgba(0,0,0,.45); opacity: 0; }
+  .key span { font-size: 30px; color: #ffb4ad; }
+  .progress { position: absolute; left: 224px; top: 939.9999999999999px; width: 1472px; height: 4px; border-radius: 4px; background: rgba(255,255,255,.1); overflow: hidden; }
+  .progress .fill { width: 100%; height: 100%; background: linear-gradient(90deg, #ff5a4e, #ffb86b); transform-origin: 0 50%; }
+  .chip { position: absolute; left: 224px; top: 959.9999999999999px; display: flex; align-items: center; gap: 12px; font-size: 25px; font-weight: 700; color: #fff; opacity: 0; }
+  .chip em { font-style: normal; color: #ff5a4e; font-variant-numeric: tabular-nums; }
+  .cap { position: absolute; left: 654px; width: 1042px; top: 953.9999999999999px; font-size: 30px; line-height: 1.45; font-weight: 600; opacity: 0; }
+  .cap span { opacity: .32; color: #c9ccd3; }
+  #outro { display: flex; align-items: center; justify-content: center; }
+  #outro .card { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; padding: 0 60px; }
+  #outro .ttl { font-size: 96px; }
+  #outro ul { list-style: none; margin-top: 30px; display: flex; flex-direction: column; gap: 18px; text-align: left; }
+  #outro li { display: flex; align-items: center; gap: 18px; font-size: 36px; font-weight: 600; color: #e7e9ee; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="20.55" data-width="1920" data-height="1080">
+<div id="bg" class="clip" data-start="0" data-duration="20.55" data-track-index="0">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="grid"></div><div class="vig"></div></div><div id="intro" class="clip" data-start="0" data-duration="3.6" data-track-index="1">
+  <div class="kicker"><span class="dot"></span>HOW IT WORKS</div>
+  <h1 class="ttl"><span class="w">Mini</span> <span class="w">system</span></h1>
+  
+  <div class="sweep"></div>
+  </div><div id="g0" class="clip tcard" data-start="3.6" data-duration="3.35" data-track-index="1">
+  <div class="kicker"><span class="dot"></span>OVERVIEW</div>
+  <h1 class="ttl"><span class="w">Three</span> <span class="w">parts</span></h1>
+  </div><div id="g1" class="clip stage" data-start="6.95" data-duration="8.4" data-track-index="1">
+  <div class="persp dpersp"><div class="enter"><div class="drift"><div class="dpanel" style="background:rgb(2, 6, 23)">
+    <div class="dview" data-layout-allow-overflow><div class="cam" data-layout-allow-overflow><svg viewBox="0 0 600 300" width="600" height="300" id="g1-svg" style="position:absolute;left:44.16px;top:88.08px;width:1383.68px;height:691.84px"><g id="node-a" data-node-id="a"><rect x="40" y="120" width="120" height="50"/></g><g id="node-b" data-node-id="b"><rect x="240" y="120" width="120" height="50"/></g><g id="node-c" data-node-id="c"><rect x="440" y="120" width="120" height="50"/></g><path data-edge-id="a-b" data-edge-from="a" data-edge-to="b" d="M 160 145 L 240 145"/><path data-edge-id="b-c" data-edge-from="b" data-edge-to="c" d="M 360 145 L 440 145"/><path class="trace" data-trace="a-b" d="M 160 145 L 240 145" style="fill:none;stroke:#ff5a4e;stroke-width:3.4;stroke-linecap:round;stroke-dasharray:80;stroke-dashoffset:80;filter:drop-shadow(0 0 6px #ff5a4e)"/><path class="trace" data-trace="b-c" d="M 360 145 L 440 145" style="fill:none;stroke:#ff5a4e;stroke-width:3.4;stroke-linecap:round;stroke-dasharray:80;stroke-dashoffset:80;filter:drop-shadow(0 0 6px #ff5a4e)"/><rect class="ring" data-ring="a" x="34" y="114" width="132" height="62" rx="12" style="fill:none;stroke:#ff5a4e;stroke-width:3;opacity:0;filter:drop-shadow(0 0 10px #ff5a4e)"/><rect class="ring" data-ring="b" x="234" y="114" width="132" height="62" rx="12" style="fill:none;stroke:#ff5a4e;stroke-width:3;opacity:0;filter:drop-shadow(0 0 10px #ff5a4e)"/><rect class="ring" data-ring="c" x="434" y="114" width="132" height="62" rx="12" style="fill:none;stroke:#ff5a4e;stroke-width:3;opacity:0;filter:drop-shadow(0 0 10px #ff5a4e)"/></svg></div></div>
+  </div></div></div></div></div><div id="overlay" class="clip" data-start="3.6" data-duration="11.75" data-track-index="3">
+  <div class="progress"><div class="fill"></div></div>
+  <div class="chip" id="s1-chip"><em>02</em>Start</div><div class="chip" id="s2-chip"><em>03</em>Everything</div>
+  <div class="cap" id="s1-cap"><span id="s1-w0">Alpha</span> <span id="s1-w1">hands</span> <span id="s1-w2">work</span> <span id="s1-w3">to</span> <span id="s1-w4">Beta.</span></div><div class="cap" id="s2-cap"><span id="s2-w0">Beta</span> <span id="s2-w1">finishes</span> <span id="s2-w2">with</span> <span id="s2-w3">Gamma.</span></div>
+</div><div id="outro" class="clip" data-start="15.35" data-duration="5.2" data-track-index="4">
+  <div class="card"><div class="kicker"><span class="dot"></span>RECAP</div><h2 class="ttl">That's how it works</h2>
+    <ul><li id="li0"><svg width="34" height="34" viewBox="0 0 34 34"><circle cx="17" cy="17" r="15" fill="none" stroke="#34d399" stroke-width="3"/><path class="tick" d="M10 17.5 L15 22.5 L24.5 12" fill="none" stroke="#34d399" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="24" stroke-dashoffset="24"/></svg>Start</li><li id="li1"><svg width="34" height="34" viewBox="0 0 34 34"><circle cx="17" cy="17" r="15" fill="none" stroke="#34d399" stroke-width="3"/><path class="tick" d="M10 17.5 L15 22.5 L24.5 12" fill="none" stroke="#34d399" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="24" stroke-dashoffset="24"/></svg>Everything</li></ul>
+  </div></div>
+<audio id="master" data-start="0" data-duration="20.55" data-track-index="5" data-volume="1" src="assets/audio/master.wav"></audio>
+</div>
+<script>
+  window.__timelines = window.__timelines || {};
+  const tl = gsap.timeline({ paused: true });
+  
+  tl.fromTo('.b1', { x: -120, y: -60 }, { x: 260, y: 120, duration: 20.55, ease: 'sine.inOut' }, 0);
+  tl.fromTo('.b2', { x: 180, y: 80 }, { x: -220, y: -90, duration: 20.55, ease: 'sine.inOut' }, 0);
+  tl.fromTo('.b3', { x: 0, y: 140, scale: 0.9 }, { x: 140, y: -60, scale: 1.2, duration: 20.55, ease: 'sine.inOut' }, 0);
+  tl.fromTo('.grid', { y: 0 }, { y: 240, duration: 20.55, ease: 'none' }, 0);
+  tl.from('#intro .kicker', { opacity: 0, y: 18, duration: 0.7, ease: 'power3.out' }, 0.25);
+  tl.from('#intro .w', { opacity: 0, y: 70, filter: 'blur(14px)', duration: 0.75, ease: 'power4.out', stagger: 0.07 }, 1.25);
+  
+  tl.fromTo('#intro .sweep', { x: -900, opacity: 0 }, { x: 900, opacity: 0.9, duration: 0.9, ease: 'power2.inOut' }, 2.0);
+  
+  tl.to('#intro', { scale: 1.08, opacity: 0, filter: 'blur(10px)', duration: 0.55, ease: 'power2.in' }, 3.05);
+  tl.from('#g0 .kicker', { opacity: 0, y: 16, duration: 0.5, ease: 'power3.out' }, 3.7);
+  tl.from('#g0 .w', { opacity: 0, y: 60, filter: 'blur(12px)', duration: 0.65, ease: 'power4.out', stagger: 0.06 }, 3.9);
+  
+  tl.to('#g0', { opacity: 0, scale: 1.05, filter: 'blur(8px)', duration: 0.45, ease: 'power2.in' }, 6.5);
+  tl.fromTo('#g1 .enter', { y: 260, rotateX: 34, scale: 0.78, opacity: 0 }, { y: 0, rotateX: 0, scale: 1, opacity: 1, duration: 1.1, ease: 'power4.out' }, 6.9);
+  tl.fromTo('#g1 .drift', { rotateY: -3.5, rotateX: 3 }, { rotateY: 3, rotateX: 1, duration: 8.4, ease: 'sine.inOut' }, 6.95);
+  tl.to('#g1 .enter', { y: -120, rotateX: -22, scale: 0.72, opacity: 0, duration: 0.8, ease: 'power3.in' }, 14.55);
+  tl.set('#g1 .cam', { transformOrigin: '0px 0px' }, 0);
+  tl.to('#g1 .cam', { scale: 1.372, x: 0, y: -145.628, duration: 1.1, ease: 'power3.inOut' }, 7.1);
+  tl.to('#g1-svg g[data-node-id]', { opacity: 0.2, duration: 0.45 }, 7.2);
+  tl.to('#g1-svg path[data-edge-id]', { opacity: 0.15, duration: 0.45 }, 7.2);
+  tl.to('#g1-svg g[data-node-id="a"], #g1-svg g[data-node-id="b"]', { opacity: 1, duration: 0.45 }, 7.2);
+  tl.to('#g1-svg path[data-edge-id="a-b"]', { opacity: 1, duration: 0.45 }, 7.2);
+  tl.to('#g1-svg .ring', { opacity: 0, duration: 0.3 }, 7.1);
+  tl.fromTo('#g1-svg rect[data-ring="a"]', { opacity: 0 }, { opacity: 1, duration: 0.35, ease: 'power2.out' }, 7.65);
+  tl.fromTo('#g1-svg rect[data-ring="b"]', { opacity: 0 }, { opacity: 1, duration: 0.35, ease: 'power2.out' }, 7.83);
+  tl.to('#g1-svg path[data-trace="a-b"]', { strokeDashoffset: 0, duration: 0.7, ease: 'power2.inOut' }, 7.8);
+  tl.to('#g1-svg .trace', { opacity: 0, duration: 0.3 }, 10.8);
+  tl.set('#g1-svg .trace', { strokeDashoffset: (n, el) => el.getTotalLength(), opacity: 1 }, 11.13);
+  tl.to('#g1 .cam', { scale: 1, x: 0, y: 0, duration: 1.1, ease: 'power3.inOut' }, 11.3);
+  tl.to('#g1-svg g[data-node-id]', { opacity: 1, duration: 0.45 }, 11.4);
+  tl.to('#g1-svg path[data-edge-id]', { opacity: 1, duration: 0.45 }, 11.4);
+  tl.to('#g1-svg g[data-node-id="a"], #g1-svg g[data-node-id="b"], #g1-svg g[data-node-id="c"]', { opacity: 1, duration: 0.45 }, 11.4);
+  tl.to('#g1-svg path[data-edge-id="a-b"], #g1-svg path[data-edge-id="b-c"]', { opacity: 1, duration: 0.45 }, 11.4);
+  tl.to('#g1-svg .ring', { opacity: 0, duration: 0.3 }, 11.3);
+  tl.to('#g1-svg path[data-trace="b-c"]', { strokeDashoffset: 0, duration: 0.7, ease: 'power2.inOut' }, 12);
+  tl.to('#g1-svg .trace', { opacity: 0, duration: 0.3 }, 15);
+  tl.set('#g1-svg .trace', { strokeDashoffset: (n, el) => el.getTotalLength(), opacity: 1 }, 15.33);
+  tl.fromTo('#overlay .fill', { scaleX: 0 }, { scaleX: 1, duration: 11.75, ease: 'none' }, 3.6);
+  tl.fromTo('#s1-chip', { x: -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: 'power3.out' }, 7);
+  tl.to('#s1-chip', { x: 30, opacity: 0, duration: 0.35, ease: 'power2.in' }, 10.75);
+  tl.fromTo('#s1-cap', { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }, 7.35);
+  tl.to('#s1-cap', { opacity: 0, y: -10, duration: 0.3 }, 10.8);
+  tl.to('#s1-w0', { opacity: 1, color: '#ffffff', duration: 0.12 }, 7.5);
+  tl.to('#s1-w1', { opacity: 1, color: '#ffffff', duration: 0.12 }, 7.864);
+  tl.to('#s1-w2', { opacity: 1, color: '#ffffff', duration: 0.12 }, 8.227);
+  tl.to('#s1-w3', { opacity: 1, color: '#ffffff', duration: 0.12 }, 8.591);
+  tl.to('#s1-w4', { opacity: 1, color: '#ffffff', duration: 0.12 }, 8.955);
+  tl.fromTo('#s2-chip', { x: -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: 'power3.out' }, 11.2);
+  tl.to('#s2-chip', { x: 30, opacity: 0, duration: 0.35, ease: 'power2.in' }, 14.95);
+  tl.fromTo('#s2-cap', { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }, 11.55);
+  tl.to('#s2-cap', { opacity: 0, y: -10, duration: 0.3 }, 15);
+  tl.to('#s2-w0', { opacity: 1, color: '#ffffff', duration: 0.12 }, 11.7);
+  tl.to('#s2-w1', { opacity: 1, color: '#ffffff', duration: 0.12 }, 12.093);
+  tl.to('#s2-w2', { opacity: 1, color: '#ffffff', duration: 0.12 }, 12.486);
+  tl.to('#s2-w3', { opacity: 1, color: '#ffffff', duration: 0.12 }, 12.879);
+  tl.from('#outro .kicker', { opacity: 0, y: 16, duration: 0.5, ease: 'power3.out' }, 15.9);
+  tl.from('#outro .ttl', { opacity: 0, y: 50, filter: 'blur(12px)', duration: 0.7, ease: 'power4.out' }, 16.05);
+  tl.from('#li0', { opacity: 0, x: -30, duration: 0.45, ease: 'power3.out' }, 16.7);
+  tl.to('#li0 .tick', { strokeDashoffset: 0, duration: 0.35, ease: 'power2.out' }, 16.88);
+  tl.from('#li1', { opacity: 0, x: -30, duration: 0.45, ease: 'power3.out' }, 17.12);
+  tl.to('#li1 .tick', { strokeDashoffset: 0, duration: 0.35, ease: 'power2.out' }, 17.3);
+  tl.to('#outro .card', { scale: 1.03, duration: 4.6, ease: 'none' }, 15.95);
+  tl.to(['#outro', '#bg'], { opacity: 0, duration: 0.6, ease: 'power2.in' }, 19.95);
+  window.__timelines["main"] = tl;
+  tl.seek(0);
+</script>
+</body>
+</html>

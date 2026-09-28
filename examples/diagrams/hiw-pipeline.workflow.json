@@ -1,0 +1,192 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "How It Works Pipeline",
+    "quality_profile": "showcase",
+    "locale": "en"
+  },
+  "lanes": [
+    {
+      "id": "author",
+      "label": "Author"
+    },
+    {
+      "id": "product",
+      "label": "Real Product"
+    },
+    {
+      "id": "studio",
+      "label": "Studio"
+    },
+    {
+      "id": "gate",
+      "label": "Verify + Deliver",
+      "variant": "exception"
+    }
+  ],
+  "phases": [
+    {
+      "id": "plan",
+      "label": "Plan",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "capture",
+      "label": "Capture",
+      "fromCol": 2,
+      "toCol": 3,
+      "variant": "emphasis"
+    },
+    {
+      "id": "produce",
+      "label": "Produce + verify",
+      "fromCol": 4,
+      "toCol": 5,
+      "variant": "dashed"
+    }
+  ],
+  "mainPath": [
+    "storyboard",
+    "validate",
+    "capture",
+    "evidence",
+    "compose",
+    "render",
+    "gates"
+  ],
+  "nodes": [
+    {
+      "id": "storyboard",
+      "lane": "author",
+      "col": 0,
+      "type": "frontend",
+      "label": "Storyboard",
+      "sublabel": "scenes + narration",
+      "width": 132
+    },
+    {
+      "id": "validate",
+      "lane": "author",
+      "col": 1,
+      "type": "security",
+      "label": "Validate",
+      "sublabel": "schema + ids",
+      "width": 132
+    },
+    {
+      "id": "capture",
+      "lane": "product",
+      "col": 2,
+      "type": "external",
+      "label": "Capture",
+      "sublabel": "real clicks + keys",
+      "width": 132
+    },
+    {
+      "id": "evidence",
+      "lane": "product",
+      "col": 3,
+      "type": "database",
+      "label": "Evidence",
+      "sublabel": "frames + DOM",
+      "width": 132
+    },
+    {
+      "id": "narration",
+      "lane": "studio",
+      "col": 3,
+      "type": "backend",
+      "label": "Narration",
+      "sublabel": "TTS + word times",
+      "width": 132
+    },
+    {
+      "id": "compose",
+      "lane": "studio",
+      "col": 4,
+      "type": "backend",
+      "label": "Compose",
+      "sublabel": "motion + audio mix",
+      "width": 132
+    },
+    {
+      "id": "render",
+      "lane": "studio",
+      "col": 5,
+      "type": "cloud",
+      "label": "Render",
+      "sublabel": "video + guide",
+      "width": 132
+    },
+    {
+      "id": "gates",
+      "lane": "gate",
+      "col": 5,
+      "type": "security",
+      "label": "Quality Gates",
+      "sublabel": "labels, loudness, CPS",
+      "width": 132
+    },
+    {
+      "id": "deliver",
+      "lane": "gate",
+      "col": 4,
+      "type": "messagebus",
+      "label": "Deliver",
+      "sublabel": "receipt + SHA-256",
+      "width": 132
+    }
+  ],
+  "edges": [
+    {
+      "id": "sb-validate",
+      "from": "storyboard",
+      "to": "validate"
+    },
+    {
+      "id": "validate-capture",
+      "from": "validate",
+      "to": "capture",
+      "label": "valid",
+      "variant": "emphasis"
+    },
+    {
+      "id": "capture-evidence",
+      "from": "capture",
+      "to": "evidence"
+    },
+    {
+      "id": "evidence-compose",
+      "from": "evidence",
+      "to": "compose",
+      "label": "timestamps",
+      "variant": "emphasis"
+    },
+    {
+      "id": "narration-compose",
+      "from": "narration",
+      "to": "compose"
+    },
+    {
+      "id": "compose-render",
+      "from": "compose",
+      "to": "render"
+    },
+    {
+      "id": "render-gates",
+      "from": "render",
+      "to": "gates",
+      "label": "check",
+      "variant": "security"
+    },
+    {
+      "id": "gates-deliver",
+      "from": "gates",
+      "to": "deliver",
+      "label": "all pass",
+      "variant": "emphasis"
+    }
+  ]
+}

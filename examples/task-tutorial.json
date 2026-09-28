@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "kind": "task-tutorial",
+  "id": "todomvc-basics",
+  "title": "Manage your to-dos with TodoMVC",
+  "audience": "New users opening the app for the first time",
+  "outcome": "Add tasks, mark them complete, and filter the finished ones",
+  "language": "en",
+  "locale": "en-US",
+  "formats": [
+    "guide",
+    "video-16x9"
+  ],
+  "product": {
+    "url": "https://demo.playwright.dev/todomvc/",
+    "name": "TodoMVC",
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "copy": {
+    "intro": {
+      "title": [
+        "Manage",
+        "your",
+        "to-dos"
+      ],
+      "with": "with",
+      "product": "TodoMVC",
+      "sub": "Add tasks \u00b7 Mark them done \u00b7 Filter by status"
+    },
+    "outro": {
+      "learned": [
+        "Add a task with Enter",
+        "Mark a task as complete",
+        "Filter the list by status"
+      ]
+    },
+    "guide": {
+      "resultText": "The list now shows only completed tasks. Choose **All** to see the full list again."
+    }
+  },
+  "scenes": [
+    {
+      "id": "01-open-app",
+      "kind": "ui",
+      "title": "Open the app",
+      "actions": [
+        {
+          "do": "goto",
+          "path": "#/"
+        }
+      ],
+      "focus": {
+        "role": "heading",
+        "name": "todos"
+      },
+      "expect": [
+        {
+          "visible": {
+            "role": "heading",
+            "name": "todos"
+          }
+        }
+      ],
+      "narration": "This is the TodoMVC home screen. Your to-do list starts out empty.",
+      "guide": {
+        "step": "Open TodoMVC. The home screen shows the {label} heading and a box for new tasks."
+      },
+      "callout": false
+    },
+    {
+      "id": "02-add-task",
+      "kind": "ui",
+      "title": "Add a task",
+      "actions": [
+        {
+          "do": "click",
+          "target": {
+            "placeholder": "What needs to be done?"
+          }
+        },
+        {
+          "do": "type",
+          "target": {
+            "placeholder": "What needs to be done?"
+          },
+          "text": "Buy milk"
+        },
+        {
+          "do": "press",
+          "target": {
+            "placeholder": "What needs to be done?"
+          },
+          "key": "Enter"
+        }
+      ],
+      "focus": {
+        "placeholder": "What needs to be done?"
+      },
+      "expect": [
+        {
+          "visible": {
+            "testId": "todo-title",
+            "text": "Buy milk"
+          }
+        }
+      ],
+      "narration": "Click the input box, type your task, and press Enter. It shows up in the list right away.",
+      "guide": {
+        "step": "Click the {label} box, type your task, then press **Enter**."
+      }
+    },
+    {
+      "id": "03-add-another",
+      "kind": "ui",
+      "title": "Add another task",
+      "actions": [
+        {
+          "do": "type",
+          "target": {
+            "placeholder": "What needs to be done?"
+          },
+          "text": "Send weekly report"
+        },
+        {
+          "do": "press",
+          "target": {
+            "placeholder": "What needs to be done?"
+          },
+          "key": "Enter"
+        }
+      ],
+      "focus": {
+        "testId": "todo-count"
+      },
+      "expect": [
+        {
+          "text": {
+            "testId": "todo-count",
+            "contains": "2 items left"
+          }
+        }
+      ],
+      "narration": "Add a second task the same way. The counter below shows two tasks still to do.",
+      "guide": {
+        "step": "Repeat to add more tasks. The {label} counter shows how many are still open."
+      }
+    },
+    {
+      "id": "04-complete",
+      "kind": "ui",
+      "title": "Mark it done",
+      "actions": [
+        {
+          "do": "check",
+          "target": {
+            "testId": "todo-item",
+            "hasText": "Buy milk",
+            "child": {
+              "role": "checkbox",
+              "name": "Toggle Todo"
+            }
+          }
+        }
+      ],
+      "focus": {
+        "testId": "todo-item",
+        "hasText": "Buy milk"
+      },
+      "expect": [
+        {
+          "class": {
+            "testId": "todo-item",
+            "hasText": "Buy milk",
+            "contains": "completed"
+          }
+        },
+        {
+          "text": {
+            "testId": "todo-count",
+            "contains": "1 item left"
+          }
+        }
+      ],
+      "narration": "Click the circle next to a task to mark it done. The task gets crossed out.",
+      "guide": {
+        "step": "Click the circle to the left of a task. Finished tasks are crossed out."
+      },
+      "fx": "celebrate"
+    },
+    {
+      "id": "05-filter-completed",
+      "kind": "ui",
+      "title": "Filter finished tasks",
+      "actions": [
+        {
+          "do": "click",
+          "target": {
+            "role": "link",
+            "name": "Completed"
+          }
+        }
+      ],
+      "focus": {
+        "role": "link",
+        "name": "Completed"
+      },
+      "expect": [
+        {
+          "count": {
+            "testId": "todo-item",
+            "equals": 1
+          }
+        },
+        {
+          "url": {
+            "contains": "#/completed"
+          }
+        }
+      ],
+      "narration": "Choose Completed at the bottom of the list to see only the tasks you have finished.",
+      "guide": {
+        "step": "Choose {label} at the bottom of the list to see only finished tasks."
+      },
+      "fx": "filter"
+    }
+  ]
+}

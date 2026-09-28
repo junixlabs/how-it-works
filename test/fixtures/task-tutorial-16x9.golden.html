@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1920, height=1080" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<style>
+  
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: #07080b; }
+  #root { width: 100%; height: 100%; position: relative; overflow: hidden; font-family: "SF Pro Display", "Helvetica Neue", system-ui, sans-serif; color: #f4f5f7; }
+  .clip { position: absolute; inset: 0; }
+  #bg { background: #07080b; overflow: hidden; }
+  .blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: .55; }
+  .b1 { width: 900px; height: 900px; left: -200px; top: -300px; background: radial-gradient(circle, #3b2bd6 0%, transparent 65%); }
+  .b2 { width: 1000px; height: 1000px; right: -300px; top: 100px; background: radial-gradient(circle, #ff4e3a 0%, transparent 62%); opacity: .38; }
+  .b3 { width: 800px; height: 800px; left: 520px; bottom: -520px; background: radial-gradient(circle, #10b3a3 0%, transparent 62%); opacity: .42; }
+  .grid { position: absolute; left: 0; right: 0; top: -300px; bottom: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 60px 60px; }
+  .vig { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,.65) 100%); }
+  #intro, .tcard { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 10px; padding: 0 60px; }
+  .kicker { display: inline-flex; align-items: center; gap: 12px; font-size: 22px; font-weight: 700; letter-spacing: .22em; color: #ffb4ad; margin-bottom: 18px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: #ff5a4e; box-shadow: 0 0 18px #ff5a4e; }
+  .ttl { font-size: 112px; font-weight: 800; letter-spacing: -0.035em; line-height: 1.1; }
+  .ttl .w { display: inline-block; }
+  .ttl2 { font-size: 64px; font-weight: 600; color: #c9ccd3; letter-spacing: -0.02em; }
+  .ttl2 .w2 { display: inline-block; }
+  .accent { background: linear-gradient(90deg, #ff7a6e, #ffb86b); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .sweep { position: absolute; width: 260px; height: 520px; top: 280px; left: 830px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent); transform: skewX(-18deg); mix-blend-mode: overlay; }
+  .sub { margin-top: 26px; font-size: 28px; color: #9aa0ab; max-width: 1760px; }
+  .persp { position: absolute; left: 224px; top: 52px; width: 1472px; height: 867.9999999999999px; perspective: 2600px; }
+  .enter, .drift { position: absolute; inset: 0; transform-style: preserve-3d; }
+  .frame, .dpanel { position: absolute; inset: 0; border-radius: 16px; overflow: hidden; background: #f5f5f5;
+           box-shadow: 0 60px 140px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.08), 0 0 80px rgba(124,156,255,.12); }
+  .bar { height: 40px; background: #16181d; display: flex; align-items: center; gap: 8px; padding: 0 16px; }
+  .bar > span { width: 12px; height: 12px; border-radius: 50%; background: #ff5f57; } .bar > span:nth-child(2) { background: #febc2e; } .bar > span:nth-child(3) { background: #28c840; }
+  .addr { margin-left: 16px; display: flex; align-items: center; height: 26px; padding: 0 14px; border-radius: 8px; background: #23262d; color: #a8adb6; font-size: 14px; }
+  .view { position: relative; width: 1472px; height: 827.9999999999999px; overflow: hidden; }
+  .dview { position: relative; width: 1472px; height: 867.9999999999999px; overflow: hidden; }
+  .cam { position: absolute; left: 0; top: 0; width: 1472px; height: 867.9999999999999px; }
+  .shot { position: absolute; inset: 0; width: 1472px; height: 827.9999999999999px; object-fit: cover; }
+  .spot { position: absolute; border-radius: 12px; box-shadow: 0 0 0 4px #ff5a4e, 0 0 0 5000px rgba(8,10,16,.42), 0 0 40px 6px rgba(255,90,78,.55); opacity: 0; }
+  .tip { position: absolute; display: flex; align-items: center; gap: 8px; white-space: nowrap; padding: 7px 14px 7px 8px; border-radius: 999px; background: #111318; color: #fff;
+         font-size: 17px; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,.35); opacity: 0; transform-origin: 50% 100%; }
+  .tip.up { translate: -50% -100%; } .tip.down { translate: -50% 0; transform-origin: 50% 0; }
+  .tip b { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: #ff5a4e; font-size: 13px; }
+  .burst { position: absolute; width: 0; height: 0; }
+  .burst i { position: absolute; width: 9px; height: 9px; margin: -4.5px; border-radius: 50%; opacity: 0; }
+  .burst u { position: absolute; width: 40px; height: 40px; margin: -20px; border-radius: 50%; border: 3px solid #34d399; opacity: 0; }
+  .key { position: absolute; right: 36px; bottom: 36px; display: flex; align-items: center; gap: 10px; padding: 14px 22px; border-radius: 14px;
+         background: linear-gradient(#2a2d35, #1a1c21); color: #fff; font-size: 26px; font-weight: 700; box-shadow: 0 6px 0 #0b0c0f, 0 18px 40px rgba(0,0,0,.45); opacity: 0; }
+  .key span { font-size: 30px; color: #ffb4ad; }
+  .progress { position: absolute; left: 224px; top: 939.9999999999999px; width: 1472px; height: 4px; border-radius: 4px; background: rgba(255,255,255,.1); overflow: hidden; }
+  .progress .fill { width: 100%; height: 100%; background: linear-gradient(90deg, #ff5a4e, #ffb86b); transform-origin: 0 50%; }
+  .chip { position: absolute; left: 224px; top: 959.9999999999999px; display: flex; align-items: center; gap: 12px; font-size: 25px; font-weight: 700; color: #fff; opacity: 0; }
+  .chip em { font-style: normal; color: #ff5a4e; font-variant-numeric: tabular-nums; }
+  .cap { position: absolute; left: 654px; width: 1042px; top: 953.9999999999999px; font-size: 30px; line-height: 1.45; font-weight: 600; opacity: 0; }
+  .cap span { opacity: .32; color: #c9ccd3; }
+  #outro { display: flex; align-items: center; justify-content: center; }
+  #outro .card { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; padding: 0 60px; }
+  #outro .ttl { font-size: 96px; }
+  #outro ul { list-style: none; margin-top: 30px; display: flex; flex-direction: column; gap: 18px; text-align: left; }
+  #outro li { display: flex; align-items: center; gap: 18px; font-size: 36px; font-weight: 600; color: #e7e9ee; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="41.425" data-width="1920" data-height="1080">
+<div id="bg" class="clip" data-start="0" data-duration="41.425" data-track-index="0">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="grid"></div><div class="vig"></div></div><div id="intro" class="clip" data-start="0" data-duration="3.6" data-track-index="1">
+  <div class="kicker"><span class="dot"></span>QUICK GUIDE · 5 STEPS</div>
+  <h1 class="ttl"><span class="w">Manage</span> <span class="w">your</span> <span class="w">to-dos</span></h1>
+  <h2 class="ttl2"><span class="w2">with</span> <span class="w2 accent">TodoMVC</span></h2>
+  <div class="sweep"></div>
+  <div class="sub">Add tasks · Mark them done · Filter by status</div></div><div id="g0" class="clip stage" data-start="3.6" data-duration="32.625" data-track-index="1">
+  <div class="persp"><div class="enter"><div class="drift"><div class="frame">
+    <div class="bar"><span></span><span></span><span></span><div class="addr">demo.playwright.dev/todomvc/</div></div>
+    <div class="view" data-layout-allow-overflow><div class="cam" data-layout-allow-overflow><video id="clip-01-open-app" class="clip shot" data-start="3.6" data-duration="6.5" data-track-index="2" src="assets/clips/01-open-app.mp4" muted playsinline></video><video id="clip-02-add-task" class="clip shot" data-start="10.1" data-duration="7.125" data-track-index="2" src="assets/clips/02-add-task.mp4" muted playsinline></video><div class="spot" id="s1-spot" style="left:408.25px;top:189.29px;width:655.5px;height:98.44px"></div><div class="tip up" id="s1-tip" style="left:546.25px;top:175.49px"><b>2</b>What needs to be done?</div><video id="clip-03-add-another" class="clip shot" data-start="17.225" data-duration="6.55" data-track-index="2" src="assets/clips/03-add-another.mp4" muted playsinline></video><div class="spot" id="s2-spot" style="left:425.5px;top:414.92px;width:98.44px;height:45.54px"></div><div class="tip up" id="s2-tip" style="left:474.72px;top:401.12px"><b>3</b>2 items left</div><video id="clip-04-complete" class="clip shot" data-start="23.775" data-duration="6.2" data-track-index="2" src="assets/clips/04-complete.mp4" muted playsinline></video><div class="spot" id="s3-spot" style="left:408.25px;top:265.88px;width:655.5px;height:91.77px"></div><div class="tip up" id="s3-tip" style="left:546.25px;top:252.08px"><b>4</b>Buy milk</div><div class="burst" id="s3-burst0" style="left:442.75px;top:311.19px"><i data-a="0.0" data-d="48" style="background:#34d399"></i><i data-a="25.7" data-d="64" style="background:#7c9cff"></i><i data-a="51.4" data-d="80" style="background:#fbbf24"></i><i data-a="77.1" data-d="48" style="background:#34d399"></i><i data-a="102.9" data-d="64" style="background:#7c9cff"></i><i data-a="128.6" data-d="80" style="background:#fbbf24"></i><i data-a="154.3" data-d="48" style="background:#34d399"></i><i data-a="180.0" data-d="64" style="background:#7c9cff"></i><i data-a="205.7" data-d="80" style="background:#fbbf24"></i><i data-a="231.4" data-d="48" style="background:#34d399"></i><i data-a="257.1" data-d="64" style="background:#7c9cff"></i><i data-a="282.9" data-d="80" style="background:#fbbf24"></i><i data-a="308.6" data-d="48" style="background:#34d399"></i><i data-a="334.3" data-d="64" style="background:#7c9cff"></i><u></u></div><video id="clip-05-filter-completed" class="clip shot" data-start="29.975" data-duration="7.35" data-track-index="2" src="assets/clips/05-filter-completed.mp4" muted playsinline></video><div class="spot" id="s4-spot" style="left:735.885px;top:411.47px;width:117.99px;height:51.75px"></div><div class="tip up" id="s4-tip" style="left:794.88px;top:397.67px"><b>5</b>Completed</div></div><div class="key" id="s1-key0"><span>⏎</span> Enter</div><div class="key" id="s2-key0"><span>⏎</span> Enter</div></div>
+  </div></div></div></div></div><div id="overlay" class="clip" data-start="3.6" data-duration="32.625" data-track-index="3">
+  <div class="progress"><div class="fill"></div></div>
+  <div class="chip" id="s0-chip"><em>01</em>Open the app</div><div class="chip" id="s1-chip"><em>02</em>Add a task</div><div class="chip" id="s2-chip"><em>03</em>Add another task</div><div class="chip" id="s3-chip"><em>04</em>Mark it done</div><div class="chip" id="s4-chip"><em>05</em>Filter finished tasks</div>
+  <div class="cap" id="s0-cap"><span id="s0-w0">This</span> <span id="s0-w1">is</span> <span id="s0-w2">the</span> <span id="s0-w3">TodoMVC</span> <span id="s0-w4">home</span> <span id="s0-w5">screen.</span> <span id="s0-w6">Your</span> <span id="s0-w7">to-do</span> <span id="s0-w8">list</span> <span id="s0-w9">starts</span> <span id="s0-w10">out</span> <span id="s0-w11">empty.</span></div><div class="cap" id="s1-cap"><span id="s1-w0">Click</span> <span id="s1-w1">the</span> <span id="s1-w2">input</span> <span id="s1-w3">box,</span> <span id="s1-w4">type</span> <span id="s1-w5">your</span> <span id="s1-w6">task,</span> <span id="s1-w7">and</span> <span id="s1-w8">press</span> <span id="s1-w9">Enter.</span> <span id="s1-w10">It</span> <span id="s1-w11">shows</span> <span id="s1-w12">up</span> <span id="s1-w13">in</span> <span id="s1-w14">the</span> <span id="s1-w15">list</span> <span id="s1-w16">right</span> <span id="s1-w17">away.</span></div><div class="cap" id="s2-cap"><span id="s2-w0">Add</span> <span id="s2-w1">a</span> <span id="s2-w2">second</span> <span id="s2-w3">task</span> <span id="s2-w4">the</span> <span id="s2-w5">same</span> <span id="s2-w6">way.</span> <span id="s2-w7">The</span> <span id="s2-w8">counter</span> <span id="s2-w9">below</span> <span id="s2-w10">shows</span> <span id="s2-w11">two</span> <span id="s2-w12">tasks</span> <span id="s2-w13">still</span> <span id="s2-w14">to</span> <span id="s2-w15">do.</span></div><div class="cap" id="s3-cap"><span id="s3-w0">Click</span> <span id="s3-w1">the</span> <span id="s3-w2">circle</span> <span id="s3-w3">next</span> <span id="s3-w4">to</span> <span id="s3-w5">a</span> <span id="s3-w6">task</span> <span id="s3-w7">to</span> <span id="s3-w8">mark</span> <span id="s3-w9">it</span> <span id="s3-w10">done.</span> <span id="s3-w11">The</span> <span id="s3-w12">task</span> <span id="s3-w13">gets</span> <span id="s3-w14">crossed</span> <span id="s3-w15">out.</span></div><div class="cap" id="s4-cap"><span id="s4-w0">Choose</span> <span id="s4-w1">Completed</span> <span id="s4-w2">at</span> <span id="s4-w3">the</span> <span id="s4-w4">bottom</span> <span id="s4-w5">of</span> <span id="s4-w6">the</span> <span id="s4-w7">list</span> <span id="s4-w8">to</span> <span id="s4-w9">see</span> <span id="s4-w10">only</span> <span id="s4-w11">the</span> <span id="s4-w12">tasks</span> <span id="s4-w13">you</span> <span id="s4-w14">have</span> <span id="s4-w15">finished.</span></div>
+</div><div id="outro" class="clip" data-start="36.225" data-duration="5.2" data-track-index="4">
+  <div class="card"><div class="kicker"><span class="dot"></span>ALL DONE</div><h2 class="ttl">You're all set</h2>
+    <ul><li id="li0"><svg width="34" height="34" viewBox="0 0 34 34"><circle cx="17" cy="17" r="15" fill="none" stroke="#34d399" stroke-width="3"/><path class="tick" d="M10 17.5 L15 22.5 L24.5 12" fill="none" stroke="#34d399" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="24" stroke-dashoffset="24"/></svg>Add a task with Enter</li><li id="li1"><svg width="34" height="34" viewBox="0 0 34 34"><circle cx="17" cy="17" r="15" fill="none" stroke="#34d399" stroke-width="3"/><path class="tick" d="M10 17.5 L15 22.5 L24.5 12" fill="none" stroke="#34d399" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="24" stroke-dashoffset="24"/></svg>Mark a task as complete</li><li id="li2"><svg width="34" height="34" viewBox="0 0 34 34"><circle cx="17" cy="17" r="15" fill="none" stroke="#34d399" stroke-width="3"/><path class="tick" d="M10 17.5 L15 22.5 L24.5 12" fill="none" stroke="#34d399" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="24" stroke-dashoffset="24"/></svg>Filter the list by status</li></ul>
+  </div></div>
+<audio id="master" data-start="0" data-duration="41.425" data-track-index="5" data-volume="1" src="assets/audio/master.wav"></audio>
+</div>
+<script>
+  window.__timelines = window.__timelines || {};
+  const tl = gsap.timeline({ paused: true });
+  
+  tl.fromTo('.b1', { x: -120, y: -60 }, { x: 260, y: 120, duration: 41.425, ease: 'sine.inOut' }, 0);
+  tl.fromTo('.b2', { x: 180, y: 80 }, { x: -220, y: -90, duration: 41.425, ease: 'sine.inOut' }, 0);
+  tl.fromTo('.b3', { x: 0, y: 140, scale: 0.9 }, { x: 140, y: -60, scale: 1.2, duration: 41.425, ease: 'sine.inOut' }, 0);
+  tl.fromTo('.grid', { y: 0 }, { y: 240, duration: 41.425, ease: 'none' }, 0);
+  tl.from('#intro .kicker', { opacity: 0, y: 18, duration: 0.7, ease: 'power3.out' }, 0.25);
+  tl.from('#intro .w', { opacity: 0, y: 70, filter: 'blur(14px)', duration: 0.75, ease: 'power4.out', stagger: 0.07 }, 1.25);
+  tl.from('#intro .w2', { opacity: 0, y: 40, scale: 0.9, duration: 0.6, ease: 'back.out(2)', stagger: 0.12 }, 1.7);
+  tl.fromTo('#intro .sweep', { x: -900, opacity: 0 }, { x: 900, opacity: 0.9, duration: 0.9, ease: 'power2.inOut' }, 2.0);
+  tl.from('#intro .sub', { opacity: 0, y: 12, duration: 0.5 }, 2.15);
+  tl.to('#intro', { scale: 1.08, opacity: 0, filter: 'blur(10px)', duration: 0.55, ease: 'power2.in' }, 3.05);
+  tl.fromTo('#g0 .enter', { y: 260, rotateX: 34, scale: 0.78, opacity: 0 }, { y: 0, rotateX: 0, scale: 1, opacity: 1, duration: 1.1, ease: 'power4.out' }, 3.55);
+  tl.fromTo('#g0 .drift', { rotateY: -3.5, rotateX: 3 }, { rotateY: 3, rotateX: 1, duration: 32.625, ease: 'sine.inOut' }, 3.6);
+  tl.to('#g0 .enter', { y: -120, rotateX: -22, scale: 0.72, opacity: 0, duration: 0.8, ease: 'power3.in' }, 35.425);
+  tl.set('#g0 .cam', { transformOrigin: '0px 0px' }, 0);
+  tl.to('#g0 .cam', { scale: 1.08, x: -58.88, y: 0, duration: 1.15, ease: 'power3.inOut' }, 4.2);
+  tl.to('#g0 .cam', { scale: 1, x: 0, y: 0, duration: 0.9, ease: 'power2.inOut' }, 9.15);
+  tl.to('#g0 .cam', { scale: 1.85, x: -625.6, y: -27.243, duration: 1.15, ease: 'power3.inOut' }, 10.9);
+  tl.to('#g0 .cam', { scale: 1, x: 0, y: 0, duration: 0.9, ease: 'power2.inOut' }, 16.275);
+  tl.fromTo('#s1-spot', { opacity: 0, scale: 1.08 }, { opacity: 1, scale: 1, duration: 0.45, ease: 'power3.out' }, 11.45);
+  tl.fromTo('#s1-tip', { opacity: 0, y: 12, scale: 0.8 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: 'back.out(2.2)' }, 11.57);
+  tl.to(['#s1-spot', '#s1-tip'], { opacity: 0, duration: 0.3 }, 16.225);
+  tl.fromTo('#s1-key0', { opacity: 0, y: 24, scale: 0.7 }, { opacity: 1, y: 0, scale: 1, duration: 0.28, ease: 'back.out(3)' }, 13.908);
+  tl.to('#s1-key0', { scale: 0.9, duration: 0.08, yoyo: true, repeat: 1 }, 14.268);
+  tl.to('#s1-key0', { opacity: 0, y: 10, duration: 0.3 }, 15.168);
+  tl.to('#g0 .cam', { scale: 1.85, x: -625.6, y: -187.019, duration: 1.15, ease: 'power3.inOut' }, 18.025);
+  tl.to('#g0 .cam', { scale: 1, x: 0, y: 0, duration: 0.9, ease: 'power2.inOut' }, 22.825);
+  tl.fromTo('#s2-spot', { opacity: 0, scale: 1.08 }, { opacity: 1, scale: 1, duration: 0.45, ease: 'power3.out' }, 21.674);
+  tl.fromTo('#s2-tip', { opacity: 0, y: 12, scale: 0.8 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: 'back.out(2.2)' }, 21.794);
+  tl.to(['#s2-spot', '#s2-tip'], { opacity: 0, duration: 0.3 }, 22.775);
+  tl.fromTo('#s2-key0', { opacity: 0, y: 24, scale: 0.7 }, { opacity: 1, y: 0, scale: 1, duration: 0.28, ease: 'back.out(3)' }, 20.964);
+  tl.to('#s2-key0', { scale: 0.9, duration: 0.08, yoyo: true, repeat: 1 }, 21.324);
+  tl.to('#s2-key0', { opacity: 0, y: 10, duration: 0.3 }, 22.224);
+  tl.to('#g0 .cam', { scale: 1.85, x: -625.6, y: -162.765, duration: 1.15, ease: 'power3.inOut' }, 24.575);
+  tl.to('#g0 .cam', { scale: 1, x: 0, y: 0, duration: 0.9, ease: 'power2.inOut' }, 29.025);
+  tl.fromTo('#s3-spot', { opacity: 0, scale: 1.08 }, { opacity: 1, scale: 1, duration: 0.45, ease: 'power3.out' }, 26.515);
+  tl.fromTo('#s3-tip', { opacity: 0, y: 12, scale: 0.8 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: 'back.out(2.2)' }, 26.635);
+  tl.to(['#s3-spot', '#s3-tip'], { opacity: 0, duration: 0.3 }, 28.975);
+  tl.fromTo('#s3-burst0 i', { x: 0, y: 0, scale: 1, opacity: 1 }, { x: (n, el) => Math.cos(el.dataset.a * Math.PI / 180) * el.dataset.d, y: (n, el) => Math.sin(el.dataset.a * Math.PI / 180) * el.dataset.d, scale: 0.2, opacity: 0, duration: 0.85, ease: 'power3.out' }, 26.245);
+  tl.fromTo('#s3-burst0 u', { scale: 0.2, opacity: 0.9 }, { scale: 2.6, opacity: 0, duration: 0.7, ease: 'power2.out' }, 26.215);
+  tl.to('#g0 .cam', { scale: 1.85, x: -734.528, y: -331.476, duration: 1.15, ease: 'power3.inOut' }, 30.775);
+  tl.to('#g0 .cam', { scale: 1, x: 0, y: 0, duration: 0.9, ease: 'power2.inOut' }, 35.275);
+  tl.fromTo('#s4-spot', { opacity: 0, scale: 1.08 }, { opacity: 1, scale: 1, duration: 0.45, ease: 'power3.out' }, 31.325);
+  tl.fromTo('#s4-tip', { opacity: 0, y: 12, scale: 0.8 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: 'back.out(2.2)' }, 31.445);
+  tl.to(['#s4-spot', '#s4-tip'], { opacity: 0, duration: 0.3 }, 32.507);
+  tl.fromTo('#overlay .fill', { scaleX: 0 }, { scaleX: 1, duration: 32.625, ease: 'none' }, 3.6);
+  tl.fromTo('#s0-chip', { x: -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: 'power3.out' }, 3.65);
+  tl.to('#s0-chip', { x: 30, opacity: 0, duration: 0.35, ease: 'power2.in' }, 9.7);
+  tl.fromTo('#s0-cap', { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }, 4);
+  tl.to('#s0-cap', { opacity: 0, y: -10, duration: 0.3 }, 9.75);
+  tl.to('#s0-w0', { opacity: 1, color: '#ffffff', duration: 0.12 }, 4.425);
+  tl.to('#s0-w1', { opacity: 1, color: '#ffffff', duration: 0.12 }, 4.625);
+  tl.to('#s0-w2', { opacity: 1, color: '#ffffff', duration: 0.12 }, 4.763);
+  tl.to('#s0-w3', { opacity: 1, color: '#ffffff', duration: 0.12 }, 4.875);
+  tl.to('#s0-w4', { opacity: 1, color: '#ffffff', duration: 0.12 }, 5.975);
+  tl.to('#s0-w5', { opacity: 1, color: '#ffffff', duration: 0.12 }, 6.225);
+  tl.to('#s0-w6', { opacity: 1, color: '#ffffff', duration: 0.12 }, 7);
+  tl.to('#s0-w7', { opacity: 1, color: '#ffffff', duration: 0.12 }, 7.15);
+  tl.to('#s0-w8', { opacity: 1, color: '#ffffff', duration: 0.12 }, 7.425);
+  tl.to('#s0-w9', { opacity: 1, color: '#ffffff', duration: 0.12 }, 7.7);
+  tl.to('#s0-w10', { opacity: 1, color: '#ffffff', duration: 0.12 }, 8.038);
+  tl.to('#s0-w11', { opacity: 1, color: '#ffffff', duration: 0.12 }, 8.225);
+  tl.fromTo('#s1-chip', { x: -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: 'power3.out' }, 10.15);
+  tl.to('#s1-chip', { x: 30, opacity: 0, duration: 0.35, ease: 'power2.in' }, 16.825);
+  tl.fromTo('#s1-cap', { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }, 10.5);
+  tl.to('#s1-cap', { opacity: 0, y: -10, duration: 0.3 }, 16.875);
+  tl.to('#s1-w0', { opacity: 1, color: '#ffffff', duration: 0.12 }, 10.9);
+  tl.to('#s1-w1', { opacity: 1, color: '#ffffff', duration: 0.12 }, 11.113);
+  tl.to('#s1-w2', { opacity: 1, color: '#ffffff', duration: 0.12 }, 11.225);
+  tl.to('#s1-w3', { opacity: 1, color: '#ffffff', duration: 0.12 }, 11.6);
+  tl.to('#s1-w4', { opacity: 1, color: '#ffffff', duration: 0.12 }, 12.175);
+  tl.to('#s1-w5', { opacity: 1, color: '#ffffff', duration: 0.12 }, 12.388);
+  tl.to('#s1-w6', { opacity: 1, color: '#ffffff', duration: 0.12 }, 12.5);
+  tl.to('#s1-w7', { opacity: 1, color: '#ffffff', duration: 0.12 }, 13.025);
+  tl.to('#s1-w8', { opacity: 1, color: '#ffffff', duration: 0.12 }, 13.15);
+  tl.to('#s1-w9', { opacity: 1, color: '#ffffff', duration: 0.12 }, 13.425);
+  tl.to('#s1-w10', { opacity: 1, color: '#ffffff', duration: 0.12 }, 14.25);
+  tl.to('#s1-w11', { opacity: 1, color: '#ffffff', duration: 0.12 }, 14.462);
+  tl.to('#s1-w12', { opacity: 1, color: '#ffffff', duration: 0.12 }, 14.738);
+  tl.to('#s1-w13', { opacity: 1, color: '#ffffff', duration: 0.12 }, 14.887);
+  tl.to('#s1-w14', { opacity: 1, color: '#ffffff', duration: 0.12 }, 14.962);
+  tl.to('#s1-w15', { opacity: 1, color: '#ffffff', duration: 0.12 }, 15.05);
+  tl.to('#s1-w16', { opacity: 1, color: '#ffffff', duration: 0.12 }, 15.288);
+  tl.to('#s1-w17', { opacity: 1, color: '#ffffff', duration: 0.12 }, 15.462);
+  tl.fromTo('#s2-chip', { x: -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: 'power3.out' }, 17.275);
+  tl.to('#s2-chip', { x: 30, opacity: 0, duration: 0.35, ease: 'power2.in' }, 23.375);
+  tl.fromTo('#s2-cap', { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }, 17.625);
+  tl.to('#s2-cap', { opacity: 0, y: -10, duration: 0.3 }, 23.425);
+  tl.to('#s2-w0', { opacity: 1, color: '#ffffff', duration: 0.12 }, 18.05);
+  tl.to('#s2-w1', { opacity: 1, color: '#ffffff', duration: 0.12 }, 18.187);
+  tl.to('#s2-w2', { opacity: 1, color: '#ffffff', duration: 0.12 }, 18.25);
+  tl.to('#s2-w3', { opacity: 1, color: '#ffffff', duration: 0.12 }, 18.575);
+  tl.to('#s2-w4', { opacity: 1, color: '#ffffff', duration: 0.12 }, 18.912);
+  tl.to('#s2-w5', { opacity: 1, color: '#ffffff', duration: 0.12 }, 19);
+  tl.to('#s2-w6', { opacity: 1, color: '#ffffff', duration: 0.12 }, 19.25);
+  tl.to('#s2-w7', { opacity: 1, color: '#ffffff', duration: 0.12 }, 19.9);
+  tl.to('#s2-w8', { opacity: 1, color: '#ffffff', duration: 0.12 }, 20);
+  tl.to('#s2-w9', { opacity: 1, color: '#ffffff', duration: 0.12 }, 20.313);
+  tl.to('#s2-w10', { opacity: 1, color: '#ffffff', duration: 0.12 }, 20.713);
+  tl.to('#s2-w11', { opacity: 1, color: '#ffffff', duration: 0.12 }, 21.038);
+  tl.to('#s2-w12', { opacity: 1, color: '#ffffff', duration: 0.12 }, 21.25);
+  tl.to('#s2-w13', { opacity: 1, color: '#ffffff', duration: 0.12 }, 21.7);
+  tl.to('#s2-w14', { opacity: 1, color: '#ffffff', duration: 0.12 }, 21.975);
+  tl.to('#s2-w15', { opacity: 1, color: '#ffffff', duration: 0.12 }, 22.1);
+  tl.fromTo('#s3-chip', { x: -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: 'power3.out' }, 23.825);
+  tl.to('#s3-chip', { x: 30, opacity: 0, duration: 0.35, ease: 'power2.in' }, 29.575);
+  tl.fromTo('#s3-cap', { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }, 24.175);
+  tl.to('#s3-cap', { opacity: 0, y: -10, duration: 0.3 }, 29.625);
+  tl.to('#s3-w0', { opacity: 1, color: '#ffffff', duration: 0.12 }, 24.575);
+  tl.to('#s3-w1', { opacity: 1, color: '#ffffff', duration: 0.12 }, 24.8);
+  tl.to('#s3-w2', { opacity: 1, color: '#ffffff', duration: 0.12 }, 24.925);
+  tl.to('#s3-w3', { opacity: 1, color: '#ffffff', duration: 0.12 }, 25.275);
+  tl.to('#s3-w4', { opacity: 1, color: '#ffffff', duration: 0.12 }, 25.537);
+  tl.to('#s3-w5', { opacity: 1, color: '#ffffff', duration: 0.12 }, 25.613);
+  tl.to('#s3-w6', { opacity: 1, color: '#ffffff', duration: 0.12 }, 25.675);
+  tl.to('#s3-w7', { opacity: 1, color: '#ffffff', duration: 0.12 }, 26.1);
+  tl.to('#s3-w8', { opacity: 1, color: '#ffffff', duration: 0.12 }, 26.2);
+  tl.to('#s3-w9', { opacity: 1, color: '#ffffff', duration: 0.12 }, 26.412);
+  tl.to('#s3-w10', { opacity: 1, color: '#ffffff', duration: 0.12 }, 26.5);
+  tl.to('#s3-w11', { opacity: 1, color: '#ffffff', duration: 0.12 }, 27.175);
+  tl.to('#s3-w12', { opacity: 1, color: '#ffffff', duration: 0.12 }, 27.287);
+  tl.to('#s3-w13', { opacity: 1, color: '#ffffff', duration: 0.12 }, 27.7);
+  tl.to('#s3-w14', { opacity: 1, color: '#ffffff', duration: 0.12 }, 27.95);
+  tl.to('#s3-w15', { opacity: 1, color: '#ffffff', duration: 0.12 }, 28.3);
+  tl.fromTo('#s4-chip', { x: -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: 'power3.out' }, 30.025);
+  tl.to('#s4-chip', { x: 30, opacity: 0, duration: 0.35, ease: 'power2.in' }, 35.825);
+  tl.fromTo('#s4-cap', { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }, 30.375);
+  tl.to('#s4-cap', { opacity: 0, y: -10, duration: 0.3 }, 35.875);
+  tl.to('#s4-w0', { opacity: 1, color: '#ffffff', duration: 0.12 }, 30.825);
+  tl.to('#s4-w1', { opacity: 1, color: '#ffffff', duration: 0.12 }, 31.15);
+  tl.to('#s4-w2', { opacity: 1, color: '#ffffff', duration: 0.12 }, 31.688);
+  tl.to('#s4-w3', { opacity: 1, color: '#ffffff', duration: 0.12 }, 31.763);
+  tl.to('#s4-w4', { opacity: 1, color: '#ffffff', duration: 0.12 }, 31.85);
+  tl.to('#s4-w5', { opacity: 1, color: '#ffffff', duration: 0.12 }, 32.188);
+  tl.to('#s4-w6', { opacity: 1, color: '#ffffff', duration: 0.12 }, 32.263);
+  tl.to('#s4-w7', { opacity: 1, color: '#ffffff', duration: 0.12 }, 32.35);
+  tl.to('#s4-w8', { opacity: 1, color: '#ffffff', duration: 0.12 }, 32.975);
+  tl.to('#s4-w9', { opacity: 1, color: '#ffffff', duration: 0.12 }, 33.125);
+  tl.to('#s4-w10', { opacity: 1, color: '#ffffff', duration: 0.12 }, 33.337);
+  tl.to('#s4-w11', { opacity: 1, color: '#ffffff', duration: 0.12 }, 33.637);
+  tl.to('#s4-w12', { opacity: 1, color: '#ffffff', duration: 0.12 }, 33.737);
+  tl.to('#s4-w13', { opacity: 1, color: '#ffffff', duration: 0.12 }, 34.188);
+  tl.to('#s4-w14', { opacity: 1, color: '#ffffff', duration: 0.12 }, 34.262);
+  tl.to('#s4-w15', { opacity: 1, color: '#ffffff', duration: 0.12 }, 34.375);
+  tl.from('#outro .kicker', { opacity: 0, y: 16, duration: 0.5, ease: 'power3.out' }, 36.775);
+  tl.from('#outro .ttl', { opacity: 0, y: 50, filter: 'blur(12px)', duration: 0.7, ease: 'power4.out' }, 36.925);
+  tl.from('#li0', { opacity: 0, x: -30, duration: 0.45, ease: 'power3.out' }, 37.575);
+  tl.to('#li0 .tick', { strokeDashoffset: 0, duration: 0.35, ease: 'power2.out' }, 37.755);
+  tl.from('#li1', { opacity: 0, x: -30, duration: 0.45, ease: 'power3.out' }, 37.995);
+  tl.to('#li1 .tick', { strokeDashoffset: 0, duration: 0.35, ease: 'power2.out' }, 38.175);
+  tl.from('#li2', { opacity: 0, x: -30, duration: 0.45, ease: 'power3.out' }, 38.415);
+  tl.to('#li2 .tick', { strokeDashoffset: 0, duration: 0.35, ease: 'power2.out' }, 38.595);
+  tl.to('#outro .card', { scale: 1.03, duration: 4.6, ease: 'none' }, 36.825);
+  tl.to(['#outro', '#bg'], { opacity: 0, duration: 0.6, ease: 'power2.in' }, 40.825);
+  window.__timelines["main"] = tl;
+  tl.seek(0);
+</script>
+</body>
+</html>

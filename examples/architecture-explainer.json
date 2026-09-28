@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "kind": "architecture-explainer",
+  "id": "hiw-pipeline",
+  "title": "How It Works, explained",
+  "audience": "Engineers who want to know how a verified tutorial video is made",
+  "outcome": "Follow a storyboard from plan to a delivered, verified video",
+  "language": "en",
+  "formats": ["guide", "video-16x9"],
+  "diagrams": { "pipeline": { "type": "workflow", "spec": "diagrams/hiw-pipeline.workflow.json" } },
+  "scenes": [
+    { "id": "plan", "kind": "diagram", "diagram": "pipeline", "title": "Plan the story", "focus": ["storyboard", "validate"], "trace": ["sb-validate"],
+      "narration": "It starts with a storyboard: every scene, action, and line of narration. Validate checks it before anything runs.",
+      "guide": { "step": "Write a {label} with scenes, actions, and narration. **Validate** rejects unknown fields, ids, and targets before any work starts." } },
+    { "id": "capture", "kind": "diagram", "diagram": "pipeline", "title": "Capture the product", "focus": ["capture", "evidence"], "trace": ["validate-capture", "capture-evidence"],
+      "narration": "Capture drives the real product with real clicks and keystrokes, and keeps frames, timings, and page text as evidence.",
+      "guide": { "step": "**Capture** drives the real product. **Evidence** keeps timestamped frames, element boxes, and page text." } },
+    { "id": "produce", "kind": "diagram", "diagram": "pipeline", "title": "Compose the video", "focus": ["narration", "compose"], "trace": ["evidence-compose", "narration-compose"],
+      "narration": "Narration adds a voice with word timings. Compose turns evidence and voice into motion, captions, and sound.",
+      "guide": { "step": "**Narration** returns audio with word timings. **Compose** syncs camera, captions, and sound effects to the recorded events." } },
+    { "id": "verify", "kind": "diagram", "diagram": "pipeline", "title": "Render and verify", "focus": ["render", "gates"], "trace": ["compose-render", "render-gates"],
+      "narration": "Render produces the video and the guide. Quality gates check labels, loudness, and reading speed.",
+      "guide": { "step": "**Render** produces the video and guide. **Quality Gates** check UI labels, loudness, caption speed, and black frames." } },
+    { "id": "deliver", "kind": "diagram", "diagram": "pipeline", "title": "Deliver with proof", "focus": ["gates", "deliver"], "trace": ["gates-deliver"],
+      "narration": "Only when every gate passes does Deliver write the files, with a receipt anyone can verify.",
+      "guide": { "step": "**Deliver** writes files only after every gate passes, with a SHA-256 receipt." } },
+    { "id": "whole", "kind": "diagram", "diagram": "pipeline", "title": "The whole loop", "focus": ["storyboard", "validate", "capture", "evidence", "narration", "compose", "render", "gates", "deliver"],
+      "narration": "That is the whole loop: plan, capture, produce, and verify, every time." }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "how-it-works",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Compile verified product content (guides, GIFs, narrated videos, architecture explainers) from a storyboard and the real product.",
+  "license": "MIT",
+  "repository": { "type": "git", "url": "git+https://github.com/junixlabs/how-it-works.git" },
+  "homepage": "https://github.com/junixlabs/how-it-works",
+  "keywords": ["claude-code", "skill", "tutorial", "video", "documentation", "playwright", "tts"],
+  "bin": { "hiw": "./bin/hiw.mjs" },
+  "engines": { "node": ">=20" },
+  "scripts": { "test": "node --test test/*.test.mjs" },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "playwright": "^1.63.0"
+  }
+}

@@ -1,0 +1,211 @@
+{
+  "schema_version": 1,
+  "kind": "feature-release",
+  "id": "todomvc-filters-release",
+  "title": "Filters and quick cleanup",
+  "audience": "People who already use TodoMVC",
+  "outcome": "Filter tasks by status and clear finished ones",
+  "language": "en",
+  "locale": "en-US",
+  "formats": [
+    "guide",
+    "video-16x9",
+    "video-9x16"
+  ],
+  "product": {
+    "url": "https://demo.playwright.dev/todomvc/",
+    "name": "TodoMVC"
+  },
+  "release": {
+    "version": "2.4",
+    "date": "2026-09-28",
+    "highlights": [
+      "Filter tasks by status",
+      "Clear finished tasks in one click",
+      "Live count of open tasks"
+    ]
+  },
+  "copy": {
+    "intro": {
+      "title": [
+        "Filters",
+        "and",
+        "quick",
+        "cleanup"
+      ],
+      "product": "TodoMVC 2.4"
+    }
+  },
+  "scenes": [
+    {
+      "id": "whats-new",
+      "kind": "title",
+      "title": "What's new",
+      "heading": "Less noise, more done",
+      "sub": "Three small changes that keep your list tidy.",
+      "narration": "TodoMVC two point four keeps your list tidy with filters and one-click cleanup."
+    },
+    {
+      "id": "add-tasks",
+      "kind": "ui",
+      "title": "Add a few tasks",
+      "actions": [
+        {
+          "do": "goto",
+          "path": "#/"
+        },
+        {
+          "do": "click",
+          "target": {
+            "placeholder": "What needs to be done?"
+          }
+        },
+        {
+          "do": "type",
+          "target": {
+            "placeholder": "What needs to be done?"
+          },
+          "text": "Book flights"
+        },
+        {
+          "do": "press",
+          "target": {
+            "placeholder": "What needs to be done?"
+          },
+          "key": "Enter"
+        },
+        {
+          "do": "type",
+          "target": {
+            "placeholder": "What needs to be done?"
+          },
+          "text": "Pack bags"
+        },
+        {
+          "do": "press",
+          "target": {
+            "placeholder": "What needs to be done?"
+          },
+          "key": "Enter"
+        }
+      ],
+      "focus": {
+        "testId": "todo-count"
+      },
+      "expect": [
+        {
+          "text": {
+            "testId": "todo-count",
+            "contains": "2 items left"
+          }
+        }
+      ],
+      "narration": "Add a couple of tasks. The live counter shows how many are still open.",
+      "guide": {
+        "step": "Add tasks as usual. The {label} counter updates live."
+      }
+    },
+    {
+      "id": "finish-one",
+      "kind": "ui",
+      "title": "Finish a task",
+      "fx": "celebrate",
+      "actions": [
+        {
+          "do": "check",
+          "target": {
+            "testId": "todo-item",
+            "hasText": "Book flights",
+            "child": {
+              "role": "checkbox",
+              "name": "Toggle Todo"
+            }
+          }
+        }
+      ],
+      "focus": {
+        "testId": "todo-item",
+        "hasText": "Book flights"
+      },
+      "expect": [
+        {
+          "class": {
+            "testId": "todo-item",
+            "hasText": "Book flights",
+            "contains": "completed"
+          }
+        }
+      ],
+      "narration": "Tick a task when it is done.",
+      "guide": {
+        "step": "Tick the circle next to a finished task."
+      }
+    },
+    {
+      "id": "filter",
+      "kind": "ui",
+      "title": "Filter by status",
+      "fx": "filter",
+      "actions": [
+        {
+          "do": "click",
+          "target": {
+            "role": "link",
+            "name": "Completed"
+          }
+        }
+      ],
+      "focus": {
+        "role": "link",
+        "name": "Completed"
+      },
+      "expect": [
+        {
+          "count": {
+            "testId": "todo-item",
+            "equals": 1
+          }
+        },
+        {
+          "url": {
+            "contains": "#/completed"
+          }
+        }
+      ],
+      "narration": "New filters show only what you need. Choose Completed to review finished work.",
+      "guide": {
+        "step": "Choose {label} to see only finished tasks."
+      }
+    },
+    {
+      "id": "clear",
+      "kind": "ui",
+      "title": "Clear in one click",
+      "actions": [
+        {
+          "do": "click",
+          "target": {
+            "role": "button",
+            "name": "Clear completed"
+          }
+        }
+      ],
+      "focus": {
+        "role": "link",
+        "name": "All"
+      },
+      "expect": [
+        {
+          "count": {
+            "testId": "todo-item",
+            "equals": 0
+          }
+        }
+      ],
+      "narration": "Then clear every finished task in one click.",
+      "guide": {
+        "step": "Choose **Clear completed** to remove every finished task at once."
+      }
+    }
+  ]
+}
